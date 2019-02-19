@@ -6,8 +6,41 @@ import datetime
 import plotly as py
 import plotly.graph_objs as go
 import os
+import sqlite3
+
+
 
 cwd = os.path.dirname(os.path.realpath(__file__)) + '\\'
+
+
+def DBConfig(DBName, TableName):
+	try:
+		con = sqlite3.connect(cwd + DBName)
+		con.execute('CREATE TABLE ' + TableName + \
+			        ''' (ID 	INT PRIMARY KEY NOT NULL,
+			        USD_Harat       INT NOT NULL,
+			        USD_Dubai	INT NOT NULL,
+			        EURO		INT NOT NULL,
+			        LIR		INT NOT NULL
+			        );'''
+			      )
+		con.close()
+	except Exception as e:
+		print str(e)
+
+def InsertTODB(DBName, TableName, ColumnsList, ValuesList):
+	try:
+		con = sqlite3.connect(cwd, DBName)
+		print 'INSERT INTO ' + TableName + ' (' + (', ').join(ColumnsList)+ ') VALUES (' + (', ').join(ValuesList)+ ')'
+		con.execute('INSERT INTO ' + TableName + ' (' + (', ').join(ColumnsList)+ ') VALUES (' + (', ').join(ValuesList)+ ')')
+		con.commit()
+		con.close()
+	except Exception as e:
+		print 'error in inserting to table'.title() + str(e)
+
+
+DBConfig('CurrencyDB.db', 'Currencies')
+InsertTODB('CurrencyDB', 'Currencies', ['USD_Harat'], [100])
 
 
 def find_nth(haystack, needle, n):
@@ -62,11 +95,11 @@ y = []
 
 HaratDollar = '\xD9\x87\xD8\xB1\xD8\xA7\xD8\xAA'
 NaghdiDollar = '\xD9\x86\xD9\x82\xD8\xAF\xDB\x8C'
-SoleimaniehDollar = '\xD8\xB3\xD9\x84\xDB\x8C\xD9\x85\xD8\xA7\xD9\x86\xDB\x8C\xD9\x87'
+SoleimaniehDollar= '\xD8\xB3\xD9\x84\xDB\x8C\xD9\x85\xD8\xA7\xD9\x86\xDB\x8C\xD9\x87'
 KaghaziDollar = '\xDA\xA9\xD8\xA7\xD8\xBA\xD8\xB0\xDB\x8C'
 
 
-for FileName in range(10, 40) :
+for FileName in range(10, 11) :
 	print FileName
 	a, b = CurrencyPriceListCreator(cwd + 'messages' + str(FileName) + '.html', NaghdiDollar, HaratDollar)
 	for i in a:
