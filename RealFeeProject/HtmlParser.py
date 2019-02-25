@@ -135,12 +135,16 @@ if __name__ == "__main__":
     cursor = conn.execute("select * from Table_Naghdi_Harat")
     x=[]
     y=[]
-    for row in cursor:
-        x.append(row[1])
-        y.append(row[2])
+    try:
+        for row in cursor:
+                x.append(row[1])
+                y.append(row[2])
+    except:
+        pass
+
     conn.close()
-    # fig = go.Figure([go.Scatter(x=x, y=y)])
-    # py.offline.plot(fig)
+    fig = go.Figure([go.Scatter(x=x, y=y)])
+    py.offline.plot(fig)
 
     '''
     # if not os.path.isfile(Config.cwd + Config.DBName):
