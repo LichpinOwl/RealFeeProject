@@ -5,6 +5,9 @@ import Config
 from os import listdir
 from os.path import isfile, join
 import sqlite3
+import plotly.graph_objs as go
+import plotly as py
+from plotly import tools
 
 
 class Mesghal:
@@ -122,14 +125,35 @@ class Mesghal:
                             self.CreateTable('CurrencyDB.db', TableName)
                             try:
                                 if '#مثقال' not in SinglePost[1][:-1]:
-                                    self.InsertToTable('CurrencyDB.db', TableName, ['DateTime', TableName], [SinglePost[1][:-1] + ' ' + SinglePost[2][:-1], (SinglePost[[i for i, s in enumerate(SinglePost) if 'نسبت به قیمت قبل' in s][0] - 1][:-12]).replace(',', '') + '\n'])
+                                    self.InsertToTable('CurrencyDB.db', TableName, ['DateTime', TableName],
+                                                       [SinglePost[1][:-1] + ' ' + SinglePost[2][:-1], (SinglePost[
+                                                                                                            [i for i, s
+                                                                                                             in
+                                                                                                             enumerate(
+                                                                                                                 SinglePost)
+                                                                                                             if
+                                                                                                             'نسبت به قیمت قبل' in s][
+                                                                                                                0] - 1][
+                                                                                                        :-12]).replace(
+                                                           ',', '').replace('نقدی', '') + '\n'])
                                 else:
-                                    self.InsertToTable('CurrencyDB.db', TableName, ['DateTime', TableName], [SinglePost[2][:-1] + ' ' + SinglePost[3][:-1], (SinglePost[[i for i, s in enumerate( SinglePost) if 'نسبت به قیمت قبل' in s][ 0] - 1][ :-12]).replace(',', '') + '\n'])
+                                    self.InsertToTable('CurrencyDB.db', TableName, ['DateTime', TableName],
+                                                       [SinglePost[2][:-1] + ' ' + SinglePost[3][:-1], (SinglePost[
+                                                                                                            [i for i, s
+                                                                                                             in
+                                                                                                             enumerate(
+                                                                                                                 SinglePost)
+                                                                                                             if
+                                                                                                             'نسبت به قیمت قبل' in s][
+                                                                                                                0] - 1][
+                                                                                                        :-12]).replace(
+                                                           ',', '').replace('نقدی', '') + '\n'])
                             except IndexError:
                                 pass
 
 
 if __name__ == '__main__':
+    '''
     m = Mesghal()
     AllHtmlFiles = [f for f in listdir(Config.cwd + 'ExportedData') if isfile(join(Config.cwd + 'ExportedData', f))]
     for i in AllHtmlFiles:
@@ -143,30 +167,29 @@ if __name__ == '__main__':
             os.remove(Config.cwd + 'ExportedData2\\' + j)
     for key, value in Config.TagDict.iteritems():
         m.CurrencyPriceExtractor(value[0], value[1], key)
-
-
-
 '''
+
     # CHART LAYOUT
     layout = go.Layout(
-        title='\xD8\xB9\xD9\x86\xD9\x88\xD8\xA7\xD9\x86',
+        calendar='persian',
+        title='نمودار قیمت دلار آزاد',
         # titlefont='PT Sans Narrow',
         font=dict(
-            family='monospace',
-            size=12,
-            color='#fdcbaa'
+            family='B Roya',
+            size=18,
+            color='#ffd700'
         ),
         margin=go.layout.Margin(
-            l=100,
-            r=50,
+            l=50,
+            r=100,
             b=100,
-            t=10,
-            pad=1
+            t=50,
+            pad=0.1
         ),
         legend=dict(
             orientation='h',
-            x=0,
-            y=1.2,
+            x=0.05,
+            y=1.1,
             traceorder='normal',
             font=dict(
                 family='sans-serif',
@@ -175,7 +198,7 @@ if __name__ == '__main__':
 
             ),
             bgcolor='#CFD8DC',
-            bordercolor='#CFD8DC',
+            bordercolor='#000000',
             borderwidth=2
         ),
         xaxis=dict(
@@ -183,24 +206,29 @@ if __name__ == '__main__':
             zeroline=True,
             showline=True,
             mirror='ticks',
-            gridcolor='#bdbdbd',
-            gridwidth=2,
+            gridcolor='#ffd700',
+            gridwidth=0.1,
+            dtick='M1',
+            # tickmode='array',
+            # ticktext=['01/07/18'],
+            # tickvals=['a'],
             zerolinecolor='#969696',
             zerolinewidth=4,
-            linecolor='#636363',
-            linewidth=6,
-            title='xaxistitle',
+            linecolor='#616f39',
+            linewidth=2,
+            # title='ابتدای سال 1397',
             titlefont=dict(
                 family='monospace',
                 size=12,
-                color='#e91e63',
+                color='#ffd700',
             ),
-            tickformat='%d/%m/%y'
-            # rangeslider=dict(
+            tickformat='%y/%m/%d'
+            # rangeslider=dict(`
             #     visible=True
             # )
         ),
         yaxis=dict(
+            side='right',
             titlefont=dict(
                 family='monospace',
                 size=8,
@@ -212,53 +240,59 @@ if __name__ == '__main__':
             zeroline=True,
             showline=True,
             mirror='ticks',
-            gridcolor='#bdbdbd',
-            gridwidth=2,
-            zerolinecolor='#969696',
+            gridcolor='#ffd700',
+            gridwidth=0.2,
+            zerolinecolor='#000000',
             zerolinewidth=4,
-            linecolor='#636363',
-            linewidth=6,
+            linecolor='#616f39',
+            linewidth=4,
             tickmode='linear',
             ticks='outside',
             tick0=0,
             dtick=1000,
             ticklen=2,
-            tickwidth=2,
+            tickwidth=1,
             tickcolor='#000',
             showticklabels=True,
             tickangle=0,
             exponentformat='none',
             showexponent='last'
         ),
-        paper_bgcolor='#7f7f7f',
-        plot_bgcolor='#CFD8DC',
-        showlegend=True,
+        paper_bgcolor='#053f5e',
+        plot_bgcolor='#f8eeb4',
+        # showlegend=True,
     )
 
     conn = sqlite3.connect(Config.cwd + Config.DBName)
-    cursor = conn.execute('select * from Table_Naghdi_Kaghazi')
+    cursor = conn.execute('select * from Table_Dollar')
     x = []
     y = []
     try:
         for row in cursor:
-            x.append(row[1])
-            y.append(row[2])
+            if re.compile('139\d-\d\d-\d\d \d\d:\d\d:\d\d').match(row[1]):
+                x.append(row[1])
+                y.append(row[2])
     except:
         pass
 
     conn.close()
-    fig = go.Figure([go.Scatter(x=x,
+    # MULTIPLE CHART
+    # fig = tools.make_subplots(rows=1, cols=2, subplot_titles=('Plot 1', 'Plot 2'))
+    # fig['layout'].update(height=1000, width=1000, title='Multiple Subplots' + ' with Titles')
+    # fig.append_trace(DollarChart, 1, 1)
+    # fig.append_trace(EuroChart, 1, 2)
+
+    fig = go.Figure([go.Scatter(xcalendar='persian',
+                                x=x,
                                 y=y,
                                 marker=dict(
-                                    color='rgba(233,30,99 ,1)',
-                                    size=100,
+                                    color='#1b1919',
+                                    size=2,
                                     line=dict(
-                                        width=5,
-                                        color='rgb(0, 0, 0)'
+                                        width=50,
+                                        color='#022c43'
                                     )
                                 ),
-                                name='Harat'
-                                )],
-                    layout=layout)
+                                name='دلار آزاد'
+                                )], layout=layout)
     py.offline.plot(fig)
-'''
