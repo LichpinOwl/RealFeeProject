@@ -153,7 +153,6 @@ class Mesghal:
 
 
 if __name__ == '__main__':
-    '''
     m = Mesghal()
     AllHtmlFiles = [f for f in listdir(Config.cwd + 'ExportedData') if isfile(join(Config.cwd + 'ExportedData', f))]
     for i in AllHtmlFiles:
@@ -166,133 +165,141 @@ if __name__ == '__main__':
             f.close()
             os.remove(Config.cwd + 'ExportedData2\\' + j)
     for key, value in Config.TagDict.iteritems():
+        print '-----------------' + key
         m.CurrencyPriceExtractor(value[0], value[1], key)
-'''
-
-    # CHART LAYOUT
-    layout = go.Layout(
-        calendar='persian',
-        title='نمودار قیمت دلار آزاد',
-        # titlefont='PT Sans Narrow',
-        font=dict(
-            family='B Roya',
-            size=18,
-            color='#ffd700'
-        ),
-        margin=go.layout.Margin(
-            l=50,
-            r=100,
-            b=100,
-            t=50,
-            pad=0.1
-        ),
-        legend=dict(
-            orientation='h',
-            x=0.05,
-            y=1.1,
-            traceorder='normal',
+        # CHART LAYOUT
+        layout = go.Layout(
+            calendar='persian',
+            title=value[2],
+            # titlefont='PT Sans Narrow',
             font=dict(
-                family='sans-serif',
-                size=12,
-                color='#000',
-
+                family='B Roya',
+                size=18,
+                color='#ffd700'
             ),
-            bgcolor='#CFD8DC',
-            bordercolor='#000000',
-            borderwidth=2
-        ),
-        xaxis=dict(
-            showgrid=True,
-            zeroline=True,
-            showline=True,
-            mirror='ticks',
-            gridcolor='#ffd700',
-            gridwidth=0.1,
-            dtick='M1',
-            # tickmode='array',
-            # ticktext=['01/07/18'],
-            # tickvals=['a'],
-            zerolinecolor='#969696',
-            zerolinewidth=4,
-            linecolor='#616f39',
-            linewidth=2,
-            # title='ابتدای سال 1397',
-            titlefont=dict(
-                family='monospace',
-                size=12,
-                color='#ffd700',
+            margin=go.layout.Margin(
+                l=50,
+                r=100,
+                b=100,
+                t=50,
+                pad=0.1
             ),
-            tickformat='%y/%m/%d'
-            # rangeslider=dict(`
-            #     visible=True
-            # )
-        ),
-        yaxis=dict(
-            side='right',
-            titlefont=dict(
-                family='monospace',
-                size=8,
-                color='#fdcbaa',
+            legend=dict(
+                orientation='h',
+                x=0.05,
+                y=1.1,
+                traceorder='normal',
+                font=dict(
+                    family='sans-serif',
+                    size=12,
+                    color='#000',
+
+                ),
+                bgcolor='#CFD8DC',
+                bordercolor='#000000',
+                borderwidth=2
             ),
-            # range=[3000, 20000],
-            # type='log',
-            showgrid=True,
-            zeroline=True,
-            showline=True,
-            mirror='ticks',
-            gridcolor='#ffd700',
-            gridwidth=0.2,
-            zerolinecolor='#000000',
-            zerolinewidth=4,
-            linecolor='#616f39',
-            linewidth=4,
-            tickmode='linear',
-            ticks='outside',
-            tick0=0,
-            dtick=1000,
-            ticklen=2,
-            tickwidth=1,
-            tickcolor='#000',
-            showticklabels=True,
-            tickangle=0,
-            exponentformat='none',
-            showexponent='last'
-        ),
-        paper_bgcolor='#053f5e',
-        plot_bgcolor='#f8eeb4',
-        # showlegend=True,
-    )
+            xaxis=dict(
+                showgrid=True,
+                zeroline=True,
+                showline=True,
+                mirror='ticks',
+                gridcolor='#ffd700',
+                gridwidth=0.1,
+                dtick='M1',
+                # tickmode='array',
+                # ticktext=['01/07/18'],
+                # tickvals=['a'],
+                zerolinecolor='#969696',
+                zerolinewidth=4,
+                linecolor='#616f39',
+                linewidth=2,
+                # title='ابتدای سال 1397',
+                titlefont=dict(
+                    family='monospace',
+                    size=12,
+                    color='#ffd700',
+                ),
+                tickformat='%y/%m/%d'
+                # rangeslider=dict(`
+                #     visible=True
+                # )
+            ),
+            yaxis=dict(
+                side='right',
+                titlefont=dict(
+                    family='monospace',
+                    size=8,
+                    color='#fdcbaa',
+                ),
+                # range=[3000, 20000],
+                # type='log',
+                showgrid=True,
+                zeroline=True,
+                showline=True,
+                mirror='ticks',
+                gridcolor='#ffd700',
+                gridwidth=0.2,
+                zerolinecolor='#000000',
+                zerolinewidth=4,
+                linecolor='#616f39',
+                linewidth=4,
+                tickmode='linear',
+                ticks='outside',
+                tick0=0,
+                dtick=value[3],
+                ticklen=2,
+                tickwidth=1,
+                tickcolor='#000',
+                showticklabels=True,
+                tickangle=0,
+                exponentformat='none',
+                showexponent='last'
+            ),
+            paper_bgcolor='#053f5e',
+            plot_bgcolor='#f8eeb4',
+            # showlegend=True,
+        )
 
-    conn = sqlite3.connect(Config.cwd + Config.DBName)
-    cursor = conn.execute('select * from Table_Dollar')
-    x = []
-    y = []
-    try:
-        for row in cursor:
-            if re.compile('139\d-\d\d-\d\d \d\d:\d\d:\d\d').match(row[1]):
-                x.append(row[1])
-                y.append(row[2])
-    except:
-        pass
+        conn = sqlite3.connect(Config.cwd + Config.DBName)
+        cursor = conn.execute('select * from Table_' + str(key))
+        x = []
+        y = []
+        try:
+            for row in cursor:
+                if re.compile('139\d-\d\d-\d\d \d\d:\d\d:\d\d').match(row[1]):
+                    x.append(row[1])
+                    # SEKKEH
+                    if key == 'Sekeh':
+                        if sum(c.isdigit() for c in str(row[2])) == 4:
+                            y.append(int(str(row[2]) + '000'))
+                        else:
+                         y.append(row[2])
+                    else:
+                        y.append(row[2])
+                else:
+                    pass
+        except:
+            pass
 
-    conn.close()
-    # MULTIPLE CHART
-    # fig = tools.make_subplots(rows=1, cols=2, subplot_titles=('Plot 1', 'Plot 2'))
-    # fig['layout'].update(height=1000, width=1000, title='Multiple Subplots' + ' with Titles')
-    # fig.append_trace(DollarChart, 1, 1)
-    # fig.append_trace(EuroChart, 1, 2)
+        conn.close()
+        # MULTIPLE CHART
+        # fig = tools.make_subplots(rows=1, cols=2, subplot_titles=('Plot 1', 'Plot 2'))
+        # fig['layout'].update(height=1000, width=1000, title='Multiple Subplots' + ' with Titles')
+        # fig.append_trace(DollarChart, 1, 1)
+        # fig.append_trace(EuroChart, 1, 2)
 
-    fig = go.Figure([go.Scatter(xcalendar='persian',
-                                x=x,
-                                y=y,
-                                marker=dict(
-                                    color='#1b1919',
-                                    size=2,
-                                    line=dict(
-                                        width=50,
-                                        color='#022c43'
-                                    )
-                                ),
-                                name='دلار آزاد'
-                                )], layout=layout)
-    py.offline.plot(fig)
+        fig = go.Figure([go.Scatter(xcalendar='persian',
+                                    x=x,
+                                    y=y,
+                                    marker=dict(
+                                        color='#1b1919',
+                                        size=2,
+                                        line=dict(
+                                            width=50,
+                                            color='#022c43'
+                                        )
+                                    ),
+                                    # name='دلار آزاد'
+                                    )], layout=layout)
+        py.offline.plot(fig, filename=str(key) + '.html')
